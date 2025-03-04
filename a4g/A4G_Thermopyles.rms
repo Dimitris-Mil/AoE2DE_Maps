@@ -1,3 +1,14 @@
+/*
+
+	A4G_Thermopyles
+  Created by: Jimmil7
+	Created: 3-4-2025
+  Last Modified: 3-4-2025 
+	
+	Version: 1.0
+	Compatibility: Definitive Edition
+
+*/
 /* 
 ============================
 PLAYER SETUP
@@ -25,6 +36,7 @@ Function Used for Player Setup:
 #const ACACIATREE 1063
 #const EARTH 38
 #const WILD_CAMEL 897
+#const DLC_MOUNTAIN_11 1047
 
 <PLAYER_SETUP>
 direct_placement
@@ -278,7 +290,7 @@ create_terrain TYPE
 */
 <TERRAIN_GENERATION>
 
-create_terrain DESERT {
+create_terrain DLC_CRACKED {
   base_terrain DLC_ROCK
   land_percent 100
   height_limits 0 2
@@ -286,7 +298,7 @@ create_terrain DESERT {
 
 create_terrain DLC_DESERTGRAVEL
 {
-  base_terrain DESERT
+  base_terrain DLC_CRACKED
   land_percent 2
   number_of_clumps 30
   clumping_factor 45
@@ -383,6 +395,17 @@ create_terrain SHALLOW
   set_scale_by_groups
 
 }
+
+create_terrain DESERT
+{
+  base_terrain DLC_ROCK
+  land_percent 40
+  number_of_clumps 16
+  clumping_factor 3
+  set_scale_by_size
+  set_scale_by_groups
+  height_limits 3 3
+}
 /* 
 ============================
 CONNECTION GENERATION
@@ -430,6 +453,30 @@ create_object TYPE
 */
 <OBJECTS_GENERATION>
 
+create_object	MOUNTAIN1
+{
+  number_of_groups			6
+  number_of_objects			3
+  set_loose_grouping
+  terrain_to_place_on DESERT
+}
+create_object	MOUNTAIN2
+{
+  number_of_groups			6
+  number_of_objects			3
+  set_loose_grouping
+  terrain_to_place_on DESERT
+}
+
+create_object RELIC 
+{
+  number_of_objects 5
+  min_distance_to_players     25
+  temp_min_distance_group_placement 20
+  terrain_to_place_on DLC_CRACKED
+  avoid_cliff_zone 7
+}
+
 create_object VILLAGER
 {
   set_place_for_every_player
@@ -446,7 +493,7 @@ create_object WILD_CAMEL
 }
 /* NEAR GOLD in DESERT */
 create_object GOLD {
-  number_of_objects           4
+  number_of_objects           5
   number_of_groups            5
   set_scaling_to_map_size
   group_placement_radius      3
@@ -454,7 +501,7 @@ create_object GOLD {
   set_gaia_object_only
   temp_min_distance_group_placement 15
   max_distance_to_other_zones 10
-  terrain_to_place_on         DESERT
+  terrain_to_place_on         DLC_CRACKED
   avoid_cliff_zone            7
   avoid_all_actor_areas       /* Prevent overlapping with other resource areas */
 }
@@ -462,7 +509,7 @@ create_object GOLD {
 /* NEAR STONE in DESERT */
 create_object STONE {
   terrain_to_place_on DLC_DESERTGRAVEL
-  number_of_objects           2
+  number_of_objects           4
   number_of_groups            7
   set_scaling_to_map_size
   group_placement_radius      3
@@ -645,7 +692,6 @@ create_object MARLIN2 {
   max_distance_to_other_zones 7
   avoid_cliff_zone         7
 }
-
 
 /*
 ============================
