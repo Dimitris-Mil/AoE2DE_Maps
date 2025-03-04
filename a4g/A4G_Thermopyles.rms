@@ -1,0 +1,654 @@
+/* 
+============================
+PLAYER SETUP
+============================
+Determine player placement and modify things in the gamedata 
+
+Function Used for Player Setup:
+
+  random_placement / grouped_by_team / direct_placement
+  nomad_resources
+  force_nomad_treaty
+  behavior_version N
+  override_map_size N
+  set_gaia_civilization N
+  ai_info_map_type TYPE N N N
+  effect_amount TYPE TYPE TYPE N
+  effect_percent TYPE TYPE TYPE %
+  guard_state TYPE TYPE N N
+*/
+#const ACACIAFOREST 41
+#const ELEPHANT 936
+#const ZEBRA 1019
+#const GOATTEE 1060
+#const BAOBABTREE 1052
+#const ACACIATREE 1063
+#const EARTH 38
+#const WILD_CAMEL 897
+
+<PLAYER_SETUP>
+direct_placement
+nomad_resources
+force_nomad_treaty
+
+/* 
+============================
+LAND GENERATION 
+============================   
+Place main landmasses of terrain 
+
+Function Used for land Generation:
+  base_terrain TYPE
+  base_layer TYPE
+  enable_waves N
+  create_player_lands
+  {
+    terrain_type TYPE
+    land_percent % / number_of_tiles N
+    base_size N
+    circle_radius % N
+    left_border %
+    right_border %
+    top_border %
+    bottom_border %
+    border_fuzziness %
+    clumping_factor N
+    base_elevation N
+    zone N / set_zone_by_team / set_zone_randomly
+    other_zone_avoidance_distance N
+    land_id N
+  }
+  create_land
+  {
+    terrain_type TYPE
+    land_percent % / number_of_tiles N
+    base_size N
+    land_position % %
+    left_border %
+    right_border %
+    top_border %
+    bottom_border %
+    border_fuzziness %
+    clumping_factor N
+    base_elevation N
+    assign_to_player N / assign_to TYPE N N N
+    zone N / set_zone_randomly
+    other_zone_avoidance_distance N
+    min_placement_distance N
+    land_id N
+  }
+*/
+<LAND_GENERATION>
+
+base_terrain GRASS
+enable_waves 0
+
+create_land
+{
+  terrain_type  DLC_ROCK
+  land_percent 33
+  left_border 0
+  right_border 0
+  top_border 0
+  bottom_border 66
+  land_position 50 10
+  /* border_fuzziness 3 */
+  /* clumping_factor 10 */
+  land_id 1
+}
+
+create_land
+{
+  terrain_type  WATER
+  land_percent 66
+  left_border 20
+  right_border 20
+  top_border 40
+  bottom_border -9
+  land_position 50 99
+  border_fuzziness 8
+  clumping_factor 30
+  land_id 2
+}
+
+create_land
+{
+  terrain_type  GRASS2
+  land_percent 70
+  left_border 0
+  right_border 0
+  top_border 40
+  bottom_border 60
+  land_position 50 50
+  border_fuzziness 3
+  clumping_factor 1
+}
+
+create_land
+{
+  terrain_type  FOREST
+  land_percent 30
+  left_border 30
+  right_border 30
+  top_border 20
+  bottom_border 70
+}
+
+start_random
+	percent_chance 50 #define TOP
+	percent_chance 50 #define BOTTOM
+end_random
+
+create_land
+{
+  terrain_type DLC_DRYROAD
+  number_of_tiles 60
+  land_position 1 55
+  border_fuzziness 60
+  clumping_factor 80
+	if TOP
+	  assign_to AT_PLAYER 1 0 0
+	elseif BOTTOM
+	  assign_to AT_PLAYER 2 0 0
+	endif
+}
+
+create_land
+{
+  terrain_type DLC_DRYROAD
+  number_of_tiles 60
+  land_position 99 55
+  border_fuzziness 60
+  clumping_factor 80
+	if TOP
+	  assign_to AT_PLAYER 2 0 0
+	elseif BOTTOM
+	  assign_to AT_PLAYER 1 0 0
+	endif
+}
+
+/*  
+============================
+ELEVATION GENERATION
+============================
+Create hills. Remove this section if you do not want hills.
+
+Functions:
+  create_elevation N
+  {
+    base_terrain TYPE
+    base_layer TYPE
+    number_of_tiles N
+    number_of_clumps N
+    set_scale_by_size / set_scale_by_groups
+    spacing N
+    enable_balanced_elevation
+  }
+ */
+<ELEVATION_GENERATION>
+
+create_elevation  7
+{
+  base_terrain DLC_ROCK
+  number_of_tiles 9999
+  number_of_clumps 9999
+  set_scale_by_size
+  set_scale_by_groups
+  spacing 4
+}
+
+/* create_elevation  1
+{
+  base_terrain LEAVES
+  number_of_tiles 9999
+  number_of_clumps 9999
+  set_scale_by_size
+  set_scale_by_groups
+  spacing 1
+} */
+
+create_elevation 1
+{
+  base_terrain         WATER
+  number_of_clumps     15
+  number_of_tiles      4000
+  set_scale_by_groups
+  set_scale_by_size
+}
+
+create_elevation 2
+{
+  base_terrain         GRASS2
+  number_of_clumps     20
+  number_of_tiles      1700
+  set_scale_by_groups
+  set_scale_by_size
+  spacing 1
+}
+
+/*
+============================
+CLIFF GENERATION
+============================
+Create cliffs. Remove this section if you do not want cliffs.
+
+Functions:
+  cliff_type TYPE
+  min_number_of_cliffs N
+  max_number_of_cliffs N
+  min_length_of_cliff N
+  max_length_of_cliff N
+  cliff_curliness %
+  min_distance_cliffs N
+*/
+<CLIFF_GENERATION>
+
+cliff_type CT_GRANITE
+min_number_of_cliffs 9999
+max_number_of_cliffs 9999
+min_length_of_cliff 9999
+max_length_of_cliff 9999
+min_terrain_distance 15
+min_distance_cliffs 0
+cliff_curliness 1
+
+/*
+============================
+TERRAIN GENERATION
+============================
+Replace terrains with other terrains 
+
+Functions:
+color_correction TYPE
+create_terrain TYPE
+{
+	base_terrain TYPE
+	base_layer TYPE
+	beach_terrain TYPE
+	terrain_mask N
+	spacing_to_other_terrain_types N
+	set_flat_terrain_only
+	land_percent % / number_of_tiles N
+	number_of_clumps N
+	clumping_factor N
+	set_scale_by_size / set_scale_by_groups
+	set_avoid_player_start_areas N
+	height_limits N N
+}
+*/
+<TERRAIN_GENERATION>
+
+create_terrain DESERT {
+  base_terrain DLC_ROCK
+  land_percent 100
+  height_limits 0 2
+}
+
+create_terrain DLC_DESERTGRAVEL
+{
+  base_terrain DESERT
+  land_percent 2
+  number_of_clumps 30
+  clumping_factor 45
+  set_scale_by_size
+  set_scale_by_groups
+}
+
+create_terrain FOREST
+{
+  base_terrain GRASS2
+  land_percent 4
+  number_of_clumps 30
+  clumping_factor 45
+  set_scale_by_size
+  /* height_limits 1 7 */
+  set_scale_by_groups
+}
+
+create_terrain WATER
+{
+  base_terrain WATER
+  land_percent 30
+  number_of_clumps 30
+  clumping_factor 80
+  spacing_to_other_terrain_types 1
+  set_scale_by_size
+  set_scale_by_groups
+}
+create_terrain DLC_JUNGLEGRASS
+{
+  base_terrain GRASS2
+  land_percent 10
+  number_of_clumps 999
+  clumping_factor 45
+  /* spacing_to_other_terrain_types 1 */
+  set_scale_by_size
+  set_scale_by_groups
+} 
+
+create_terrain DIRT2
+{
+  base_terrain GRASS
+  land_percent 30
+  number_of_clumps 30
+  clumping_factor 80
+  spacing_to_other_terrain_types 5
+  set_scale_by_size
+  set_scale_by_groups
+  /* terrain_mask 1 */
+}
+
+
+create_terrain DLC_DIRT4
+{
+  base_terrain DIRT2
+  land_percent 2
+  number_of_clumps 16
+  clumping_factor 10
+  set_scale_by_size
+  set_scale_by_groups
+}
+
+
+/* create_terrain DLC_BLACK
+{
+  base_terrain DIRT
+  land_percent 3
+  number_of_clumps 16
+  clumping_factor 3
+  set_scale_by_size
+  set_scale_by_groups
+} */
+
+create_terrain MED_WATER
+{
+  base_terrain WATER
+  land_percent 100
+  number_of_clumps 16
+  clumping_factor 3
+  spacing_to_other_terrain_types 4
+  set_scale_by_size
+  set_scale_by_groups
+}
+
+
+create_terrain SHALLOW
+{
+  base_terrain WATER
+  beach_terrain WATER
+  land_percent 10
+  number_of_clumps 5
+  clumping_factor 1
+  set_scale_by_size
+  set_scale_by_groups
+
+}
+/* 
+============================
+CONNECTION GENERATION
+============================
+Create connections between lands
+
+Functions:
+accumulate_connections
+create_connect_all_players_land / create_connect_teams_lands / create_connect_all_lands / create_connect_same_land_zones / create_connect_to_nonplayer_land
+{
+	default_terrain_replacement TYPE
+	replace_terrain TYPE TYPE
+	terrain_cost TYPE N
+	terrain_size TYPE N N
+}
+*/
+<CONNECTION_GENERATION>
+
+create_connect_all_players_land
+{
+  replace_terrain FOREST    LAYER_B
+  terrain_cost    FOREST    7
+  terrain_size    FOREST    6       1
+}
+
+/*
+============================
+OBJECTS GENERATION
+============================
+Create objects on the map
+
+Functions:
+create_object TYPE
+{
+	number_of_objects N
+	number_of_groups N
+	group_variance N
+	group_placement_radius N
+	set_tight_grouping / set_loose_grouping
+	min_distance_to_players N
+	max_distance_to_players N
+	...
+	avoid_all_actor_areas   (if you want to prevent overlapping)
+}
+*/
+<OBJECTS_GENERATION>
+
+create_object VILLAGER
+{
+  set_place_for_every_player
+  min_distance_to_players    2
+  max_distance_to_players    5
+}
+
+create_object WILD_CAMEL
+{
+  number_of_objects          1
+  set_place_for_every_player
+  min_distance_to_players    7
+  max_distance_to_players    9
+}
+/* NEAR GOLD in DESERT */
+create_object GOLD {
+  number_of_objects           4
+  number_of_groups            5
+  set_scaling_to_map_size
+  group_placement_radius      3
+  set_tight_grouping
+  set_gaia_object_only
+  temp_min_distance_group_placement 15
+  max_distance_to_other_zones 10
+  terrain_to_place_on         DESERT
+  avoid_cliff_zone            7
+  avoid_all_actor_areas       /* Prevent overlapping with other resource areas */
+}
+
+/* NEAR STONE in DESERT */
+create_object STONE {
+  terrain_to_place_on DLC_DESERTGRAVEL
+  number_of_objects           2
+  number_of_groups            7
+  set_scaling_to_map_size
+  group_placement_radius      3
+  set_tight_grouping
+  set_gaia_object_only
+  temp_min_distance_group_placement 20
+  max_distance_to_other_zones 7
+  avoid_cliff_zone            7
+  avoid_all_actor_areas       /* Prevent overlapping */
+}
+
+/* Resources in Dir (Mid & Sides) */
+
+/* ELEPHANT */
+/* create_object ELEPHANT {
+  number_of_groups         2
+  number_of_objects        1
+  set_loose_grouping
+  set_scaling_to_map_size
+  terrain_to_place_on      DIRT
+  set_gaia_object_only
+  temp_min_distance_group_placement 18
+  max_distance_to_other_zones         7
+  avoid_cliff_zone         10
+  avoid_all_actor_areas    /* Prevent overlapping */
+} */
+
+/* ZEBRA */
+create_object ZEBRA {
+  number_of_groups         2
+  number_of_objects        4
+  group_variance           1
+  set_loose_grouping
+  set_scaling_to_map_size
+  terrain_to_place_on      DIRT
+  set_gaia_object_only
+  temp_min_distance_group_placement 14
+  max_distance_to_other_zones         7
+  avoid_cliff_zone         7
+  avoid_all_actor_areas    /* Ensure separation */
+}
+/* ZEBRA in GRASS2 */
+create_object ZEBRA {
+  number_of_groups         4
+  number_of_objects        3
+  group_variance           1
+  set_loose_grouping
+  set_scaling_to_map_size
+  terrain_to_place_on      DLC_JUNGLEGRASS
+  set_gaia_object_only
+  temp_min_distance_group_placement 14
+  max_distance_to_other_zones         7
+  avoid_cliff_zone         7
+  avoid_all_actor_areas    /* Ensure separation */
+}
+/* BAOBABTREE in DIRT */
+create_object BAOBABTREE {
+  number_of_groups         14
+  number_of_objects        1
+  set_loose_grouping
+  set_scaling_to_map_size
+  terrain_to_place_on      DLC_DIRT4
+  set_gaia_object_only
+  temp_min_distance_group_placement 14
+  max_distance_to_other_zones         7
+  avoid_cliff_zone         7
+  avoid_all_actor_areas    /* Prevent overlapping */
+}
+
+/* Bottom & Sides Resources in DIRT2 */
+
+/* BAOBABTREE in DIRT2 */
+create_object BAOBABTREE {
+  number_of_groups         6
+  number_of_objects        10
+  set_loose_grouping
+  set_scaling_to_map_size
+  terrain_to_place_on      DIRT2
+  set_gaia_object_only
+  temp_min_distance_group_placement 14
+  max_distance_to_other_zones         7
+  avoid_all_actor_areas    /* Ensure spacing */
+}
+
+/* ELEPHANT in DIRT2 */
+create_object ELEPHANT {
+  number_of_groups         3
+  number_of_objects        1
+  set_loose_grouping
+  set_scaling_to_map_size
+  terrain_to_place_on      DIRT2
+  set_gaia_object_only
+  temp_min_distance_group_placement 14
+  max_distance_to_other_zones         7
+  avoid_all_actor_areas    /* Prevent overlapping */
+}
+
+/* ZEBRA in DIRT2 */
+create_object ZEBRA {
+  number_of_groups         3
+  number_of_objects        4
+  group_variance           1
+  set_loose_grouping
+  set_scaling_to_map_size
+  terrain_to_place_on      DIRT2
+  set_gaia_object_only
+  temp_min_distance_group_placement 14
+  max_distance_to_other_zones         7
+  avoid_cliff_zone         7
+  avoid_all_actor_areas    /* Ensure separation */
+}
+
+create_object GOLD {
+  number_of_objects 4
+  number_of_groups 2
+  set_scaling_to_map_size
+  group_placement_radius 1
+  set_tight_grouping
+  set_gaia_object_only
+  temp_min_distance_group_placement 18
+  max_distance_to_other_zones 7
+  terrain_to_place_on 	DLC_DIRT4
+  avoid_all_actor_areas    /* Maintain spacing */
+}
+create_object STONE
+{
+  terrain_to_place_on DLC_DIRT4
+  number_of_objects 2
+  number_of_groups 2
+  set_scaling_to_map_size
+  group_placement_radius 3
+  set_tight_grouping
+  set_gaia_object_only
+  temp_min_distance_group_placement 18
+  max_distance_to_other_zones 7
+  avoid_all_actor_areas    /* Maintain spacing */
+}
+
+/* Sea Resources */
+create_object SHORE_FISH {
+  number_of_objects        25
+  set_scaling_to_map_size
+  min_distance_group_placement 5
+  set_gaia_object_only
+  terrain_to_place_on SHALLOW
+}
+
+create_object DORADO {
+  number_of_objects        5
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_group_placement 5
+  max_distance_to_other_zones 4
+}
+
+create_object SNAPPER {
+  number_of_objects        3
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_group_placement 5
+  max_distance_to_other_zones 4
+}
+
+create_object MARLIN1 {
+  number_of_groups         6
+  number_of_objects        1
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_group_placement 10
+  max_distance_to_other_zones 7
+  avoid_cliff_zone         7
+}
+
+create_object MARLIN2 {
+  number_of_groups         7
+  number_of_objects        1
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_group_placement 10
+  max_distance_to_other_zones 7
+  avoid_cliff_zone         7
+}
+
+
+/*
+============================
+End of Map Script
+============================
+*/
