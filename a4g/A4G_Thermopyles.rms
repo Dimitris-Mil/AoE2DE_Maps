@@ -37,6 +37,7 @@ Function Used for Player Setup:
 #const EARTH 38
 #const WILD_CAMEL 897
 #const DLC_MOUNTAIN_11 1047
+#const SIDE_LANDS 9
 
 <PLAYER_SETUP>
 direct_placement
@@ -106,7 +107,6 @@ create_land
   land_position 50 10
   /* border_fuzziness 3 */
   /* clumping_factor 10 */
-  land_id 1
 }
 
 create_land
@@ -120,7 +120,6 @@ create_land
   land_position 50 99
   border_fuzziness 8
   clumping_factor 30
-  land_id 2
 }
 
 create_land
@@ -154,10 +153,10 @@ end_random
 create_land
 {
   terrain_type DLC_DRYROAD
-  number_of_tiles 60
+  number_of_tiles 30
   land_position 1 55
   border_fuzziness 60
-  clumping_factor 80
+  /* clumping_factor 80 */
 	if TOP
 	  assign_to AT_PLAYER 1 0 0
 	elseif BOTTOM
@@ -168,15 +167,59 @@ create_land
 create_land
 {
   terrain_type DLC_DRYROAD
-  number_of_tiles 60
+  number_of_tiles 30
   land_position 99 55
   border_fuzziness 60
-  clumping_factor 80
+  /* clumping_factor 80 */
 	if TOP
 	  assign_to AT_PLAYER 2 0 0
 	elseif BOTTOM
 	  assign_to AT_PLAYER 1 0 0
 	endif
+}
+/* 
+=======================
+Sides
+=======================
+ */
+create_land {
+  terrain_type SIDE_LANDS
+  land_percent 100
+  left_border 0
+  right_border 90
+  bottom_border 30
+  top_border 65
+  land_id 99
+}
+
+create_land {
+  terrain_type SIDE_LANDS
+  land_percent 100
+  left_border 0
+  right_border 90
+  bottom_border 15
+  top_border 67
+  land_id 97
+}
+
+create_land {
+  terrain_type SIDE_LANDS
+  land_percent 100
+  left_border 90
+  right_border 0
+  bottom_border 30
+  top_border 65
+  land_id 98
+}
+
+create_land {
+  terrain_type SIDE_LANDS
+  land_percent 100
+  left_border 90
+  right_border 0
+  bottom_border 15
+  top_border 67
+  land_id 96
 }
 
 /*  
@@ -256,10 +299,10 @@ Functions:
 <CLIFF_GENERATION>
 
 cliff_type CT_GRANITE
-min_number_of_cliffs 9999
-max_number_of_cliffs 9999
-min_length_of_cliff 9999
-max_length_of_cliff 9999
+min_number_of_cliffs 4
+max_number_of_cliffs 4
+min_length_of_cliff 4
+max_length_of_cliff 4
 min_terrain_distance 15
 min_distance_cliffs 0
 cliff_curliness 1
@@ -296,6 +339,13 @@ create_terrain DLC_CRACKED {
   height_limits 0 2
 }
 
+create_terrain FOREST {
+  base_terrain DLC_ROCK
+  land_percent 100
+  height_limits 4 7
+}
+
+
 create_terrain DLC_DESERTGRAVEL
 {
   base_terrain DLC_CRACKED
@@ -309,7 +359,7 @@ create_terrain DLC_DESERTGRAVEL
 create_terrain FOREST
 {
   base_terrain GRASS2
-  land_percent 4
+  land_percent 3
   number_of_clumps 30
   clumping_factor 45
   set_scale_by_size
@@ -357,6 +407,7 @@ create_terrain DLC_DIRT4
   land_percent 2
   number_of_clumps 16
   clumping_factor 10
+  bottom_border 30
   set_scale_by_size
   set_scale_by_groups
 }
@@ -384,7 +435,7 @@ create_terrain MED_WATER
 }
 
 
-create_terrain SHALLOW
+/* create_terrain SHALLOW
 {
   base_terrain WATER
   beach_terrain WATER
@@ -394,7 +445,7 @@ create_terrain SHALLOW
   set_scale_by_size
   set_scale_by_groups
 
-}
+} */
 
 create_terrain DESERT
 {
@@ -477,10 +528,31 @@ create_object RELIC
   avoid_cliff_zone 7
 }
 
+/* ======================================= */
+/*  Player Objects                         */
+/* ======================================= */
 create_object VILLAGER
 {
   set_place_for_every_player
   min_distance_to_players    2
+  max_distance_to_players    5
+}
+
+create_object GOATTEE
+{
+	set_place_for_every_player
+	set_loose_grouping
+	min_distance_to_players					3
+	max_distance_to_players					3
+}
+
+create_object GOATTEE
+{
+  number_of_objects          3
+  set_loose_grouping
+  set_gaia_object_only
+  set_place_for_every_player
+  min_distance_to_players    3
   max_distance_to_players    5
 }
 
@@ -491,19 +563,24 @@ create_object WILD_CAMEL
   min_distance_to_players    7
   max_distance_to_players    9
 }
+/* ======================================= */
+/*  Middle Resources                       */
+/* ======================================= */
 /* NEAR GOLD in DESERT */
 create_object GOLD {
+  terrain_to_place_on         DLC_CRACKED
   number_of_objects           5
   number_of_groups            5
   set_scaling_to_map_size
-  group_placement_radius      3
   set_tight_grouping
   set_gaia_object_only
-  temp_min_distance_group_placement 15
-  max_distance_to_other_zones 10
-  terrain_to_place_on         DLC_CRACKED
+  temp_min_distance_group_placement 10
+  max_distance_to_other_zones 5
   avoid_cliff_zone            7
   avoid_all_actor_areas       /* Prevent overlapping with other resource areas */
+  find_closest_to_map_center
+  min_distance_to_map_edge 15
+  min_distance_group_placement 4
 }
 
 /* NEAR STONE in DESERT */
@@ -512,13 +589,15 @@ create_object STONE {
   number_of_objects           4
   number_of_groups            7
   set_scaling_to_map_size
-  group_placement_radius      3
   set_tight_grouping
   set_gaia_object_only
-  temp_min_distance_group_placement 20
-  max_distance_to_other_zones 7
+  temp_min_distance_group_placement 10
+  max_distance_to_other_zones 5
   avoid_cliff_zone            7
   avoid_all_actor_areas       /* Prevent overlapping */
+  find_closest_to_map_center
+  min_distance_to_map_edge 15
+  min_distance_group_placement 4
 }
 
 /* Resources in Dir (Mid & Sides) */
@@ -536,117 +615,255 @@ create_object STONE {
   avoid_cliff_zone         10
   avoid_all_actor_areas    /* Prevent overlapping */
 } */
+/* ======================================= */
+/*  Bottom Side Resources                  */
+/* ======================================= */
 
-/* ZEBRA */
-create_object ZEBRA {
-  number_of_groups         2
-  number_of_objects        4
-  group_variance           1
-  set_loose_grouping
-  set_scaling_to_map_size
-  terrain_to_place_on      DIRT
-  set_gaia_object_only
-  temp_min_distance_group_placement 14
-  max_distance_to_other_zones         7
-  avoid_cliff_zone         7
-  avoid_all_actor_areas    /* Ensure separation */
-}
-/* ZEBRA in GRASS2 */
-create_object ZEBRA {
-  number_of_groups         4
-  number_of_objects        3
-  group_variance           1
-  set_loose_grouping
-  set_scaling_to_map_size
-  terrain_to_place_on      DLC_JUNGLEGRASS
-  set_gaia_object_only
-  temp_min_distance_group_placement 14
-  max_distance_to_other_zones         7
-  avoid_cliff_zone         7
-  avoid_all_actor_areas    /* Ensure separation */
-}
-/* BAOBABTREE in DIRT */
-create_object BAOBABTREE {
-  number_of_groups         14
-  number_of_objects        1
-  set_loose_grouping
-  set_scaling_to_map_size
-  terrain_to_place_on      DLC_DIRT4
-  set_gaia_object_only
-  temp_min_distance_group_placement 14
-  max_distance_to_other_zones         7
-  avoid_cliff_zone         7
-  avoid_all_actor_areas    /* Prevent overlapping */
-}
-
-/* Bottom & Sides Resources in DIRT2 */
-
-/* BAOBABTREE in DIRT2 */
-create_object BAOBABTREE {
-  number_of_groups         6
-  number_of_objects        10
-  set_loose_grouping
-  set_scaling_to_map_size
-  terrain_to_place_on      DIRT2
-  set_gaia_object_only
-  temp_min_distance_group_placement 14
-  max_distance_to_other_zones         7
-  avoid_all_actor_areas    /* Ensure spacing */
-}
-
-/* ELEPHANT in DIRT2 */
-create_object ELEPHANT {
-  number_of_groups         3
-  number_of_objects        1
-  set_loose_grouping
-  set_scaling_to_map_size
-  terrain_to_place_on      DIRT2
-  set_gaia_object_only
-  temp_min_distance_group_placement 14
-  max_distance_to_other_zones         7
-  avoid_all_actor_areas    /* Prevent overlapping */
-}
-
-/* ZEBRA in DIRT2 */
-create_object ZEBRA {
-  number_of_groups         3
-  number_of_objects        4
-  group_variance           1
-  set_loose_grouping
-  set_scaling_to_map_size
-  terrain_to_place_on      DIRT2
-  set_gaia_object_only
-  temp_min_distance_group_placement 14
-  max_distance_to_other_zones         7
-  avoid_cliff_zone         7
-  avoid_all_actor_areas    /* Ensure separation */
-}
+/* 
+=======================================
+LEFT Side
+=======================================
+*/
 
 create_object GOLD {
-  number_of_objects 4
-  number_of_groups 2
-  set_scaling_to_map_size
-  group_placement_radius 1
+  number_of_objects 3
   set_tight_grouping
   set_gaia_object_only
-  temp_min_distance_group_placement 18
-  max_distance_to_other_zones 7
-  terrain_to_place_on 	DLC_DIRT4
-  avoid_all_actor_areas    /* Maintain spacing */
+  set_place_for_every_player
+  min_distance_to_players    6
+  max_distance_to_players    6
+  place_on_specific_land_id 99
+  resource_delta -300
+  find_closest_to_map_center
+  min_distance_group_placement 2
 }
 create_object STONE
 {
-  terrain_to_place_on DLC_DIRT4
   number_of_objects 2
-  number_of_groups 2
-  set_scaling_to_map_size
-  group_placement_radius 3
   set_tight_grouping
   set_gaia_object_only
-  temp_min_distance_group_placement 18
-  max_distance_to_other_zones 7
-  avoid_all_actor_areas    /* Maintain spacing */
+  set_place_for_every_player
+  min_distance_to_players    4
+  max_distance_to_players    4
+  place_on_specific_land_id 99
+  find_closest_to_map_edge
+  min_distance_to_map_edge 3
+  min_distance_group_placement 2
 }
+/* Close zebras */
+create_object ZEBRA {
+  number_of_groups         1
+  number_of_objects        3
+  set_loose_grouping
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_to_players    4
+  max_distance_to_players    4
+  place_on_specific_land_id 97
+  temp_min_distance_group_placement 7
+  min_distance_to_map_edge 3
+}
+/* Far Zebras */
+create_object ZEBRA {
+  number_of_groups         1
+  number_of_objects        3
+  set_loose_grouping
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_to_players    7
+  max_distance_to_players    7
+  temp_min_distance_group_placement 15
+  place_on_specific_land_id 97
+  min_distance_to_map_edge 3
+}
+ 
+/* BAOBABTREE in DIRT */
+create_object BAOBABTREE {
+  number_of_groups         1
+  number_of_objects        10
+  set_loose_grouping
+  set_gaia_object_only
+  set_scaling_to_map_size
+  min_distance_to_players    1
+  max_distance_to_players    1
+  place_on_specific_land_id 99
+  find_closest_to_map_edge
+} 
+
+/* BAOBABTREE in DIRT */
+create_object BAOBABTREE {
+  number_of_groups         1
+  number_of_objects        10
+  set_loose_grouping
+  set_gaia_object_only
+  set_scaling_to_map_size
+  min_distance_to_players    3
+  max_distance_to_players    3
+  place_on_specific_land_id 97
+  find_closest_to_map_edge
+  min_distance_to_map_edge 3
+} 
+
+create_object BAOBABTREE {
+  number_of_groups         4
+  number_of_objects        4
+  set_loose_grouping
+  set_gaia_object_only
+  set_scaling_to_map_size
+  min_distance_to_players    7
+  max_distance_to_players    7
+  place_on_specific_land_id 97
+  find_closest_to_map_edge
+  min_distance_to_map_edge 3
+} 
+
+create_object ELEPHANT {
+  number_of_groups         1
+  number_of_objects        1
+  set_loose_grouping
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_to_players    6
+  max_distance_to_players    6
+  place_on_specific_land_id 99
+  temp_min_distance_group_placement 8
+}
+create_object ELEPHANT {
+  number_of_groups         1
+  number_of_objects        1
+  set_loose_grouping
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_to_players    10
+  max_distance_to_players    10
+  place_on_specific_land_id 97
+  temp_min_distance_group_placement 8
+}
+/* 
+=======================================
+RIGHT Side
+=======================================
+*/
+create_object GOLD {
+  number_of_objects 3
+  set_tight_grouping
+  set_gaia_object_only
+  set_place_for_every_player
+  min_distance_to_players    6
+  max_distance_to_players    6
+  place_on_specific_land_id 98
+  resource_delta -300
+  find_closest_to_map_center
+  min_distance_group_placement 2
+}
+create_object STONE
+{
+  number_of_objects 2
+  set_tight_grouping
+  set_gaia_object_only
+  set_place_for_every_player
+  min_distance_to_players    4
+  max_distance_to_players    4
+  place_on_specific_land_id 98
+  find_closest_to_map_edge
+  min_distance_to_map_edge 3
+  min_distance_group_placement 2
+}
+/* Close zebras */
+create_object ZEBRA {
+  number_of_groups         1
+  number_of_objects        3
+  set_loose_grouping
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_to_players    4
+  max_distance_to_players    4
+  place_on_specific_land_id 96
+  temp_min_distance_group_placement 7
+  min_distance_to_map_edge 3
+}
+/* Far Zebras */
+create_object ZEBRA {
+  number_of_groups         1
+  number_of_objects        3
+  set_loose_grouping
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_to_players    7
+  max_distance_to_players    7
+  temp_min_distance_group_placement 15
+  place_on_specific_land_id 96
+  min_distance_to_map_edge 3
+}
+ 
+/* BAOBABTREE in DIRT */
+create_object BAOBABTREE {
+  number_of_groups         1
+  number_of_objects        10
+  set_loose_grouping
+  set_gaia_object_only
+  set_scaling_to_map_size
+  min_distance_to_players    1
+  max_distance_to_players    5
+  place_on_specific_land_id 98
+  find_closest_to_map_edge
+} 
+
+/* BAOBABTREE in DIRT */
+create_object BAOBABTREE {
+  number_of_groups         1
+  number_of_objects        10
+  set_loose_grouping
+  set_gaia_object_only
+  set_scaling_to_map_size
+  min_distance_to_players    3
+  max_distance_to_players    3
+  place_on_specific_land_id 96
+  find_closest_to_map_edge
+  min_distance_to_map_edge 3
+} 
+
+create_object BAOBABTREE {
+  number_of_groups         4
+  number_of_objects        4
+  set_loose_grouping
+  set_gaia_object_only
+  set_scaling_to_map_size
+  min_distance_to_players    7
+  max_distance_to_players    7
+  place_on_specific_land_id 96
+  find_closest_to_map_edge
+  min_distance_to_map_edge 3
+} 
+
+create_object ELEPHANT {
+  number_of_groups         1
+  number_of_objects        1
+  set_loose_grouping
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_to_players    6
+  max_distance_to_players    6
+  place_on_specific_land_id 98
+  temp_min_distance_group_placement 8
+}
+create_object ELEPHANT {
+  number_of_groups         1
+  number_of_objects        1
+  set_loose_grouping
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_to_players    10
+  max_distance_to_players    10
+  place_on_specific_land_id 96
+  temp_min_distance_group_placement 8
+}
+
+/* 
+=======================================
+END of Side Resources
+=======================================
+*/
 
 /* Sea Resources */
 create_object SHORE_FISH {
@@ -654,7 +871,7 @@ create_object SHORE_FISH {
   set_scaling_to_map_size
   min_distance_group_placement 5
   set_gaia_object_only
-  terrain_to_place_on SHALLOW
+  terrain_to_place_on WATER
 }
 
 create_object DORADO {
@@ -662,7 +879,7 @@ create_object DORADO {
   set_scaling_to_map_size
   set_gaia_object_only
   min_distance_group_placement 5
-  max_distance_to_other_zones 4
+  max_distance_to_other_zones 10
 }
 
 create_object SNAPPER {
@@ -670,7 +887,7 @@ create_object SNAPPER {
   set_scaling_to_map_size
   set_gaia_object_only
   min_distance_group_placement 5
-  max_distance_to_other_zones 4
+  max_distance_to_other_zones 10
 }
 
 create_object MARLIN1 {
@@ -679,7 +896,7 @@ create_object MARLIN1 {
   set_scaling_to_map_size
   set_gaia_object_only
   min_distance_group_placement 10
-  max_distance_to_other_zones 7
+  max_distance_to_other_zones 15
   avoid_cliff_zone         7
 }
 
@@ -688,7 +905,7 @@ create_object MARLIN2 {
   number_of_objects        1
   set_scaling_to_map_size
   set_gaia_object_only
-  min_distance_group_placement 10
+  min_distance_group_placement 20
   max_distance_to_other_zones 7
   avoid_cliff_zone         7
 }
