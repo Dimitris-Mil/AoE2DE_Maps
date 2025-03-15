@@ -118,7 +118,6 @@ create_land
   top_border 40
   bottom_border -9
   land_position 50 99
-  border_fuzziness 8
   clumping_factor 30
 }
 
@@ -296,7 +295,7 @@ Functions:
   cliff_curliness %
   min_distance_cliffs N
 */
-<CLIFF_GENERATION>
+/* <CLIFF_GENERATION>
 
 cliff_type CT_GRANITE
 min_number_of_cliffs 4
@@ -305,7 +304,7 @@ min_length_of_cliff 4
 max_length_of_cliff 4
 min_terrain_distance 15
 min_distance_cliffs 0
-cliff_curliness 1
+cliff_curliness 1 */
 
 /*
 ============================
@@ -506,26 +505,30 @@ create_object TYPE
 
 create_object	MOUNTAIN1
 {
-  number_of_groups			6
-  number_of_objects			3
+  number_of_groups			8
   set_loose_grouping
   terrain_to_place_on DESERT
+  set_scaling_to_map_size
+  min_distance_to_map_edge 5
+  find_closest_to_map_center
 }
 create_object	MOUNTAIN2
 {
-  number_of_groups			6
-  number_of_objects			3
+  number_of_groups			8
   set_loose_grouping
   terrain_to_place_on DESERT
+  set_scaling_to_map_size
+  min_distance_to_map_edge 5
+  find_closest_to_map_center
 }
 
 create_object RELIC 
 {
   number_of_objects 5
   min_distance_to_players     25
-  temp_min_distance_group_placement 20
+  temp_min_distance_group_placement 15
   terrain_to_place_on DLC_CRACKED
-  avoid_cliff_zone 7
+  find_closest_to_map_center
 }
 
 /* ======================================= */
