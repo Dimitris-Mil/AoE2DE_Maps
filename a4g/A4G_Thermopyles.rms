@@ -36,8 +36,10 @@ Function Used for Player Setup:
 #const ACACIATREE 1063
 #const EARTH 38
 #const WILD_CAMEL 897
-#const DLC_MOUNTAIN_11 1047
 #const SIDE_LANDS 9
+#const RELIC_LANDS 3
+#const LEFT_MID_SIDES 9
+#const RIGHT_MID_SIDES 9
 
 <PLAYER_SETUP>
 direct_placement
@@ -96,53 +98,7 @@ Function Used for land Generation:
 base_terrain GRASS
 enable_waves 0
 
-create_land
-{
-  terrain_type  DLC_ROCK
-  land_percent 33
-  left_border 0
-  right_border 0
-  top_border 0
-  bottom_border 80
-  land_position 50 10
-  border_fuzziness 100
-  /* clumping_factor 10 */
-}
 
-create_land
-{
-  terrain_type  WATER
-  land_percent 66
-  left_border 20
-  right_border 20
-  top_border 40
-  bottom_border -9
-  land_position 50 99
-  clumping_factor 30
-}
-
-create_land
-{
-  terrain_type  GRASS2
-  land_percent 70
-  left_border 0
-  right_border 0
-  top_border 40
-  bottom_border 60
-  land_position 50 50
-  border_fuzziness 3
-  clumping_factor 1
-}
-
-create_land
-{
-  terrain_type  FOREST
-  land_percent 100
-  left_border 20
-  right_border 20
-  top_border 20
-  bottom_border 70
-}
 
 start_random
 	percent_chance 50 #define TOP
@@ -151,7 +107,7 @@ end_random
 
 create_land
 {
-  terrain_type DLC_DRYROAD
+  terrain_type ROAD
   number_of_tiles 30
   land_position 1 55
   border_fuzziness 60
@@ -165,7 +121,7 @@ create_land
 
 create_land
 {
-  terrain_type DLC_DRYROAD
+  terrain_type ROAD
   number_of_tiles 30
   land_position 99 55
   border_fuzziness 60
@@ -176,6 +132,84 @@ create_land
 	  assign_to AT_PLAYER 1 0 0
 	endif
 }
+
+create_land
+{
+  terrain_type  ROCK
+  land_percent 33
+  left_border 0
+  right_border 0
+  top_border 0
+  bottom_border 80
+  land_position 50 10
+  border_fuzziness 100
+  /* clumping_factor 10 */
+  land_id 200
+}
+
+create_land
+{
+  terrain_type  WATER
+  land_percent 66
+  left_border 10
+  right_border 10
+  top_border 40
+  bottom_border -9
+  land_position 50 99
+  land_id 199
+  /* clumping_factor 30 */
+}
+
+create_land
+{
+  terrain_type  GRASS2
+  land_percent 70
+  left_border 0
+  right_border 0
+  top_border 40
+  bottom_border 50
+  land_position 50 50
+  /* border_fuzziness 3
+  clumping_factor 1 */
+  land_id 198
+}
+
+create_land
+{
+  terrain_type  FOREST
+  land_percent 100
+  left_border 10
+  right_border 10
+  top_border 20
+  bottom_border 60
+  border_fuzziness 100
+  clumping_factor 40
+  land_id 197
+}
+
+create_land
+{
+  terrain_type  LEFT_MID_SIDES
+  land_percent 100
+  left_border 0
+  right_border 80
+  top_border 20
+  bottom_border 70
+  land_id 300
+}
+
+
+create_land
+{
+  terrain_type  RIGHT_MID_SIDES
+  land_percent 100
+  left_border 80
+  right_border 0
+  top_border 20
+  bottom_border 70
+  land_id 301
+}
+
 /* 
 =======================
 Sides
@@ -221,6 +255,17 @@ create_land {
   land_id 96
 }
 
+
+create_land {
+  terrain_type RELIC_LANDS
+  land_percent 100
+  left_border 50
+  right_border 50
+  bottom_border 0
+  top_border 90
+  land_id 100
+}
+
 /*  
 ============================
 ELEVATION GENERATION
@@ -243,12 +288,12 @@ Functions:
 
 create_elevation  7
 {
-  base_terrain DLC_ROCK
+  base_terrain ROCK
   number_of_tiles 9999
   number_of_clumps 9999
   set_scale_by_size
   set_scale_by_groups
-  spacing 4
+  spacing 3
 }
 
 /* create_elevation  1
@@ -268,6 +313,7 @@ create_elevation 1
   number_of_tiles      4000
   set_scale_by_groups
   set_scale_by_size
+  spacing 1
 }
 
 create_elevation 2
@@ -332,22 +378,21 @@ create_terrain TYPE
 */
 <TERRAIN_GENERATION>
 
-create_terrain DLC_CRACKED {
-  base_terrain DLC_ROCK
+create_terrain LEAVES {
+  base_terrain ROCK
   land_percent 100
   height_limits 0 2
 }
 
 create_terrain FOREST {
-  base_terrain DLC_ROCK
+  base_terrain ROCK
   land_percent 100
   height_limits 4 7
 }
 
-
-create_terrain DLC_DESERTGRAVEL
+create_terrain DIRT
 {
-  base_terrain DLC_CRACKED
+  base_terrain LEAVES
   land_percent 2
   number_of_clumps 30
   clumping_factor 45
@@ -358,11 +403,10 @@ create_terrain DLC_DESERTGRAVEL
 create_terrain FOREST
 {
   base_terrain GRASS2
-  land_percent 3
+  number_of_tiles 200
   number_of_clumps 40
-  clumping_factor -10
+  clumping_factor 10
   set_scale_by_size
-  /* height_limits 1 7 */
   set_scale_by_groups
 }
 
@@ -376,7 +420,7 @@ create_terrain WATER
   set_scale_by_size
   set_scale_by_groups
 }
-create_terrain DLC_JUNGLEGRASS
+create_terrain GRASS
 {
   base_terrain GRASS2
   land_percent 10
@@ -400,7 +444,7 @@ create_terrain DIRT2
 }
 
 
-create_terrain DLC_DIRT4
+create_terrain DIRT4
 {
   base_terrain DIRT2
   land_percent 2
@@ -411,16 +455,6 @@ create_terrain DLC_DIRT4
   set_scale_by_groups
 }
 
-
-/* create_terrain DLC_BLACK
-{
-  base_terrain DIRT
-  land_percent 3
-  number_of_clumps 16
-  clumping_factor 3
-  set_scale_by_size
-  set_scale_by_groups
-} */
 
 create_terrain MED_WATER
 {
@@ -448,13 +482,14 @@ create_terrain MED_WATER
 
 create_terrain DESERT
 {
-  base_terrain DLC_ROCK
+  base_terrain ROCK
   land_percent 40
   number_of_clumps 16
   clumping_factor 3
   set_scale_by_size
   set_scale_by_groups
   height_limits 3 3
+  terrain_mask 2
 }
 /* 
 ============================
@@ -503,32 +538,30 @@ create_object TYPE
 */
 <OBJECTS_GENERATION>
 
-create_object	MOUNTAIN1
+/* create_object	MOUNTAIN1
 {
-  number_of_groups			8
+  number_of_objects 3
   set_loose_grouping
   terrain_to_place_on DESERT
   set_scaling_to_map_size
-  min_distance_to_map_edge 5
+  min_distance_to_map_edge 15
   find_closest_to_map_center
-}
+} */
 create_object	MOUNTAIN2
 {
-  number_of_groups			8
+  number_of_groups 8
   set_loose_grouping
   terrain_to_place_on DESERT
   set_scaling_to_map_size
-  min_distance_to_map_edge 5
+  min_distance_to_map_edge 10
   find_closest_to_map_center
 }
 
 create_object RELIC 
 {
   number_of_objects 5
-  min_distance_to_players     25
-  temp_min_distance_group_placement 15
-  terrain_to_place_on DLC_CRACKED
-  find_closest_to_map_center
+  place_on_specific_land_id 100
+  set_tight_grouping
 }
 
 /* ======================================= */
@@ -571,7 +604,7 @@ create_object WILD_CAMEL
 /* ======================================= */
 /* NEAR GOLD in DESERT */
 create_object GOLD {
-  terrain_to_place_on         DLC_CRACKED
+  terrain_to_place_on         LEAVES
   number_of_objects           5
   number_of_groups            5
   set_scaling_to_map_size
@@ -588,7 +621,7 @@ create_object GOLD {
 
 /* NEAR STONE in DESERT */
 create_object STONE {
-  terrain_to_place_on DLC_DESERTGRAVEL
+  terrain_to_place_on DIRT
   number_of_objects           4
   number_of_groups            7
   set_scaling_to_map_size
@@ -601,6 +634,32 @@ create_object STONE {
   find_closest_to_map_center
   min_distance_to_map_edge 15
   min_distance_group_placement 4
+}
+
+/* Close zebras */
+create_object ZEBRA {
+  number_of_groups         2
+  number_of_objects        3
+  set_loose_grouping
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_to_players    4
+  max_distance_to_players    4
+  place_on_specific_land_id 300
+  temp_min_distance_group_placement 4
+  min_distance_to_map_edge 1
+}
+create_object ZEBRA {
+  number_of_groups         2
+  number_of_objects        3
+  set_loose_grouping
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_to_players    4
+  max_distance_to_players    4
+  place_on_specific_land_id 301
+  temp_min_distance_group_placement 4
+  min_distance_to_map_edge 1
 }
 
 /* Resources in Dir (Mid & Sides) */
@@ -636,7 +695,7 @@ create_object GOLD {
   min_distance_to_players    6
   max_distance_to_players    6
   place_on_specific_land_id 99
-  resource_delta -300
+  /* resource_delta -300 */
   find_closest_to_map_center
   min_distance_group_placement 2
 }
@@ -755,7 +814,7 @@ create_object GOLD {
   min_distance_to_players    6
   max_distance_to_players    6
   place_on_specific_land_id 98
-  resource_delta -300
+  /* resource_delta -300 */
   find_closest_to_map_center
   min_distance_group_placement 2
 }
@@ -878,29 +937,32 @@ create_object SHORE_FISH {
 }
 
 create_object DORADO {
+  number_of_objects        10
+  set_scaling_to_map_size
+  set_gaia_object_only
+  min_distance_group_placement 5
+  max_distance_to_other_zones 10
+  terrain_to_place_on MED_WATER
+}
+
+create_object SNAPPER {
   number_of_objects        5
   set_scaling_to_map_size
   set_gaia_object_only
   min_distance_group_placement 5
   max_distance_to_other_zones 10
-}
-
-create_object SNAPPER {
-  number_of_objects        3
-  set_scaling_to_map_size
-  set_gaia_object_only
-  min_distance_group_placement 5
-  max_distance_to_other_zones 10
+  terrain_to_place_on MED_WATER
 }
 
 create_object MARLIN1 {
-  number_of_groups         6
+  number_of_groups         8
   number_of_objects        1
   set_scaling_to_map_size
   set_gaia_object_only
   min_distance_group_placement 10
   max_distance_to_other_zones 15
   avoid_cliff_zone         7
+  terrain_to_place_on MED_WATER
 }
 
 create_object MARLIN2 {
@@ -911,6 +973,7 @@ create_object MARLIN2 {
   min_distance_group_placement 20
   max_distance_to_other_zones 7
   avoid_cliff_zone         7
+  terrain_to_place_on MED_WATER
 }
 
 /*
